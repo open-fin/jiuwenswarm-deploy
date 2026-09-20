@@ -1,0 +1,23 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: jiuwenswarm-web
+    protocol: http
+    host: 127.0.0.1
+    port: 5173
+    connect_timeout: 10000
+    read_timeout: 3600000
+    write_timeout: 3600000
+    retries: 0
+    routes:
+      - name: jiuwenswarm-public
+        paths:
+          - /
+        protocols:
+          - http
+          - https
+        strip_path: false
+        preserve_host: true
+        request_buffering: false
+        response_buffering: false
