@@ -1,0 +1,9 @@
+diff --git a/check_handler.sh b/check_handler.sh
+--- a/check_handler.sh
++++ b/check_handler.sh
+@@ -332,2 +332,5 @@
+ check_if_gateway_up() {
++    if [ "${DEPLOY_VARS["RENDER_ONLY"]}" == "true" ]; then
++        return
++    fi
+     if ! check_k8s_resource_exists "deployment" "${DEPLOY_VARS["GATEWAY_NAME"]}" "${DEPLOY_VARS["NAMESPACE"]}"; then

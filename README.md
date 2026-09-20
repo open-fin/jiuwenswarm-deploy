@@ -1,4 +1,11 @@
-# JiuwenSwarm `dev-stable` + Kong OSS 单机部署指南
+# JiuwenSwarm 部署方案
+
+本仓库目前提供两套部署资料：
+
+- [Kong OSS 单机入口方案](#jiuwenswarm-dev-stable--kong-oss-单机部署指南)：JiuwenSwarm 运行在宿主机，Kong 提供统一入口。
+- [OpenShift Profile](openshift/README.md)：将 JiuwenSwarm `dev-stable` 的企业版应用组件部署到 OpenShift，并复用平台现有数据库、Redis、对象存储和 RWX PVC。
+
+## JiuwenSwarm `dev-stable` + Kong OSS 单机部署指南
 
 本仓库提供一套适合演示环境的部署方式：JiuwenSwarm 运行在宿主机上，Kong OSS 以 DB-less 模式运行在 Docker 中，作为统一入口代理 JiuwenSwarm 自带 Web UI、REST/SSE API 和 WebSocket。
 
