@@ -293,6 +293,7 @@ cp -a dist/. "$HOME/.jiuwenswarm/channels/web/frontend/dist/"
 
 ## 参考
 
+- [Model Gateway 对接与适配设计](model-gateway/README.md)
 - [JiuwenSwarm](https://github.com/openJiuwen-ai/jiuwenswarm)
 - [Kong Gateway DB-less mode](https://developer.konghq.com/gateway/db-less-mode/)
 - [Kong Gateway declarative configuration](https://developer.konghq.com/gateway/entities/declarative-config/)
