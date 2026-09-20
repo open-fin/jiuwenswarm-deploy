@@ -4,6 +4,82 @@
 
 本文基于 JiuwenSwarm `dev-stable` 提交 `892f0ffe433196ea231014fad9c27df11c99d65e` 检查。升级分支后必须重新执行服务端 dry-run 和完整冒烟测试。
 
+> **当前交付状态**：本目录目前提供 OpenShift 适配规则、转换脚本、Route 模板和操作指南，**还不是一套可以直接执行 `oc apply -k openshift/` 的完整部署清单**。生成真实清单需要与目标 `dev-stable` 版本匹配的完整企业部署包，以及目标 OpenShift 环境的基础设施参数。不要把示例值或转换工具当成生产配置直接部署。
+
+## 0. 下一步需要提供什么
+
+在继续生成真实 OpenShift 配置前，需要把以下输入准备到当前工作区。使用者不需要先学习 `oc` 或 Kustomize；这些输入齐全后，再由本 Profile 生成并验证最终配置。
+
+### 0.1 与 `dev-stable` 匹配的企业部署包
+
+提供企业部署包的目录或 zip 路径，至少应包含完整的：
+
+```text
+deploy/enterprise/
+├── deploy.sh
+├── templates/
+└── ...
+```
+
+其中必须包含部署脚本实际引用的模板，例如 `templates/gateway-config.template.yaml`。公开的 `dev-stable@892f0ffe` 源码树缺少该文件，因此仅使用公开源码无法可靠生成完整部署清单。不能从其他版本复制模板冒充匹配版本。
+
+### 0.2 目标 OpenShift 与平台服务参数
+
+需要由平台或部署团队提供以下非敏感参数：
+
+- OpenShift Project/Namespace。
+- JiuwenSwarm 各组件的镜像仓库、镜像名称和 tag/digest。
+- PostgreSQL 地址、端口、数据库名和用户名。
+- Redis 地址和端口。
+- MinIO/S3 endpoint、bucket 和是否启用 TLS。
+- 提供 RWX 能力的 StorageClass 名称，以及现有 PVC 名称或期望容量。
+- 用户访问域名、Route TLS 模式，以及已有 TLS Secret 名称（如适用）。
+- 企业代理、NetworkPolicy 和外部服务 egress 限制（如适用）。
+
+密码、Access Key、Secret Key 等敏感值不要提交到 Git。文档和清单只引用 OpenShift Secret；真实值由部署人员、Secret Manager 或 External Secrets Operator 注入。
+
+### 0.3 确认 JiuwenBox 策略
+
+必须在生成清单前选择一种模式：
+
+- `restricted`：首期关闭 JiuwenBox sidecar，使用 OpenShift 默认 `restricted-v2`，但依赖 JiuwenBox 的沙箱/代码执行功能不可用。
+- `privileged`：保留 JiuwenBox，由安全和平台团队审批专用 ServiceAccount 与最小权限 SCC。不能把特权 SCC 授予 `default` ServiceAccount。
+
+### 0.4 输入齐全后的实际交付
+
+输入齐全后，本目录需要补齐或生成以下真实资源，而不是只保留示例：
+
+```text
+openshift/
+├── kustomization.yaml
+├── namespace.yaml
+├── config/
+├── secrets/              # 仅 Secret 结构或外部 Secret 引用，不含明文密码
+├── gateway/
+├── web/
+├── manager/              # 不使用 Manager 时不生成
+├── identity/
+├── runtime/
+├── agentserver/
+├── routes/
+└── storage/
+```
+
+交付验收目标：
+
+```bash
+# 生成并查看最终 YAML，不修改集群
+oc kustomize openshift/
+
+# 由 OpenShift 服务端校验，不实际创建资源
+oc apply --dry-run=server -k openshift/
+
+# 校验通过后部署
+oc apply -k openshift/
+```
+
+这里的 `oc` 是 OpenShift 命令行工具；`-k` 表示读取目录中的 `kustomization.yaml` 并组合所有资源。当前目录在上述真实输入补齐并通过服务端 dry-run 前，不应宣称为“可直接部署”。
+
 ## 1. 结论与适用范围
 
 JiuwenSwarm 的 Python/React 业务协议不需要为了 OpenShift 重写。需要适配的是部署边界：
