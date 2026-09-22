@@ -4,6 +4,7 @@
 
 - [Kong OSS 单机入口方案](#jiuwenswarm-dev-stable--kong-oss-单机部署指南)：JiuwenSwarm 运行在宿主机，Kong 提供统一入口。
 - [OpenShift Profile](openshift/README.md)：将 JiuwenSwarm `dev-stable` 的企业版应用组件部署到 OpenShift，并复用平台现有数据库、Redis、对象存储和 RWX PVC。
+- [WorkSwarm 0.2.6 与 `dev-stable` Agent 能力对比](docs/workswarm-vs-dev-stable-agent-capabilities.md)：区分 Multi-Agent、Agent Team、Expert 的后端实现与 Web 展示情况。
 
 ## JiuwenSwarm `dev-stable` + Kong OSS 单机部署指南
 
